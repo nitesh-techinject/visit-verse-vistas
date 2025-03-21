@@ -1,7 +1,7 @@
 
 import { useState } from 'react';
-import { motion } from 'framer-motion';
-import { MapPin, Hotel } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { MapPin, Hotel, Sparkles } from 'lucide-react';
 import LocationCard from './LocationCard';
 import { getFeaturedLocations, getLocationsByType } from '@/data/locations';
 
@@ -24,34 +24,35 @@ const FeaturedSection = () => {
   const locations = getLocations();
 
   return (
-    <section className="py-20">
-      <div className="mx-auto max-w-7xl px-4">
-        <div className="mb-12 text-center">
+    <section>
+      <div className="mx-auto max-w-7xl px-6">
+        <div className="mb-16 text-center">
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="mb-4 text-4xl font-bold text-mathura-dark"
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.7 }}
+            className="mb-5 text-4xl font-bold text-mathura-dark lg:text-5xl"
           >
             Explore Mathura
           </motion.h2>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="mx-auto max-w-2xl text-center text-mathura-text/80"
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.7, delay: 0.1 }}
+            className="mx-auto max-w-2xl text-center text-lg text-mathura-text/80"
           >
             Discover sacred temples and comfortable accommodations in the birthplace of Lord Krishna
           </motion.p>
         </div>
 
-        <div className="mb-8 flex flex-wrap justify-center gap-4">
+        <div className="mb-10 flex flex-wrap justify-center gap-4">
           <TabButton 
             isActive={activeTab === 'featured'} 
             onClick={() => setActiveTab('featured')}
             label="Featured"
+            icon={<Sparkles className="h-4 w-4" />}
           />
           <TabButton 
             isActive={activeTab === 'temples'} 
@@ -67,16 +68,20 @@ const FeaturedSection = () => {
           />
         </div>
 
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5 }}
-          className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3"
-        >
-          {locations.map((location, index) => (
-            <LocationCard key={location.id} location={location} index={index} />
-          ))}
-        </motion.div>
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={activeTab}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.5 }}
+            className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3"
+          >
+            {locations.map((location, index) => (
+              <LocationCard key={location.id} location={location} index={index} />
+            ))}
+          </motion.div>
+        </AnimatePresence>
       </div>
     </section>
   );
@@ -91,13 +96,13 @@ interface TabButtonProps {
 
 const TabButton = ({ isActive, onClick, label, icon }: TabButtonProps) => (
   <motion.button
-    whileHover={{ scale: 1.05 }}
-    whileTap={{ scale: 0.95 }}
+    whileHover={{ scale: 1.03 }}
+    whileTap={{ scale: 0.97 }}
     onClick={onClick}
-    className={`relative flex items-center gap-2 rounded-full px-6 py-2 font-medium transition-all duration-300 ${
+    className={`group relative flex items-center gap-2 rounded-full px-6 py-3 font-medium transition-all duration-300 ${
       isActive
-        ? 'bg-mathura-accent text-white'
-        : 'bg-white text-mathura-text hover:bg-mathura-muted'
+        ? 'bg-mathura-accent text-white shadow-lg shadow-mathura-accent/25'
+        : 'bg-white text-mathura-text shadow-md shadow-black/5 hover:bg-mathura-muted'
     }`}
   >
     {icon}
@@ -106,7 +111,7 @@ const TabButton = ({ isActive, onClick, label, icon }: TabButtonProps) => (
       <motion.div
         layoutId="tab-indicator"
         className="absolute inset-0 rounded-full"
-        transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+        transition={{ type: "spring", stiffness: 300, damping: 30 }}
       />
     )}
   </motion.button>
